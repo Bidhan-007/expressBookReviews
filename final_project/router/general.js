@@ -109,20 +109,22 @@ public_users.get('/author/:author',function (req, res) {
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-    const title = req.params.title;
-
-    const keys = Object.keys(books);
-
-    let result = [];
-
-    for (let key of keys) {
-
-        if (books[key].title === title) {
-            result.push(books[key]);
+    const getBooksByTitle=new Promise((resolve,reject)=>{
+        const title=req.params.title
+        if(books[title]){
+            resolve(books[title])
+        }else{
+            reject("Book Not Found")
         }
-    }
+    });
 
-    return res.status(200).json(result);
+    getBooksByTitle
+    .then((data)=>{
+        res.status(200).json(data)
+    })
+    .catch((err)=>{
+        res.status(404).send(err)
+    })
 });
 
 //  Get book review
