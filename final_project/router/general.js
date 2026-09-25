@@ -89,20 +89,22 @@ public_users.get('/isbn/:isbn',function (req, res) {
   
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
-    const author = req.params.author;
-
-    const keys = Object.keys(books);
-
-    let result = [];
-
-    for (let key of keys) {
-
-        if (books[key].author === author) {
-            result.push(books[key]);
+    const getBooksByAuthor=new Promise((resolve,reject)=>{
+        const author=req.params.author;
+        if(books[author]){
+            resolve(books[author]);
+        }else{
+            reject("Book Not Found");
         }
-    }
+    });
 
-    return res.status(200).json(result);
+    getBooksByAuthor
+    .then((data)=>{
+        res.status(200).json(data)
+    })
+    .catch((err)=>{
+        res.status(200).send(err);
+    });
 });
 
 // Get all books based on title
